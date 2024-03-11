@@ -1,0 +1,30 @@
+version: "3"
+services:
+  Xray:
+    container_name: xray
+    image: teddysun/xray
+    restart: unless-stopped
+    network_mode: bridge
+    volumes:
+      - ${PWD}/config/xray-config:/etc/xray
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+
+  Nginx:
+    container_name: nginx
+    image: nginx:latest
+    restart: unless-stopped
+    network_mode: bridge
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ${PWD}/config/nginx-config/:/etc/nginx/conf.d/
+    links:
+      - Xray:xray
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
